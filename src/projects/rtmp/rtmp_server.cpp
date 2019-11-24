@@ -197,7 +197,7 @@ void RtmpServer::OnDisconnected(const std::shared_ptr<ov::Socket> &remote, Physi
 						   chunk_stream->GetAppId(), chunk_stream->GetStreamId());
 		}
 
-		logti("RTMP client is disconnected: [%s/%s] (%u/%u), remote: %s",
+		logti("The RTMP client is disconnected: [%s/%s] (%u/%u), remote: %s",
 			  chunk_stream->GetAppName().CStr(), chunk_stream->GetStreamName().CStr(),
 			  chunk_stream->GetAppId(), chunk_stream->GetStreamId(),
 			  remote->ToString().CStr());
@@ -332,6 +332,16 @@ ov::DelayQueueAction RtmpServer::OnGarbageCheck(void *parameter)
 	for (auto &garbage : garbage_list)
 	{
 		auto &chunk_stream = garbage.second;
+
+		if(chunk_stream->GetRemoteSocket() != nullptr)
+		{
+			logtw("RTMP stream %s is timed out. Disconnecting...", chunk_stream->GetRemoteSocket()->ToString().CStr());
+		}
+		else
+		{
+			OV_ASSERT2(chunk_stream->GetRemoteSocket() != nullptr);
+			logtw("RTMP stream (Unknown) is timed out. Disconnecting...");
+		}
 
 		// Close the socket
 		_physical_port->DisconnectClient(dynamic_cast<ov::ClientSocket *>(garbage.first));
