@@ -97,8 +97,8 @@ ov::String Packetizer::MakeUtcMillisecond(int64_t value)
 	// 012345678901234567890123
 	result.SetCapacity(24);
 
-	time_t time_vaule = static_cast<time_t>(value) / 1000;
-	std::tm *now_tm = ::gmtime(&time_vaule);
+	time_t time_value = static_cast<time_t>(value) / 1000;
+	std::tm *now_tm = ::gmtime(&time_value);
 	char *buffer = result.GetBuffer();
 
 	// YYYY-MM-DDTHH:II:SS.sssZ
@@ -109,7 +109,7 @@ ov::String Packetizer::MakeUtcMillisecond(int64_t value)
 	{
 		// YYYY-MM-DDTHH:II:SS.sssZ
 		//                    ~~~~~
-		result.AppendFormat(".%03uZ", static_cast<uint32_t>(value) % 1000);
+		result.AppendFormat(".%03uZ", static_cast<uint32_t>(value % 1000LL));
 		return result;
 	}
 
